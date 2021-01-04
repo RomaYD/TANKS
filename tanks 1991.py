@@ -19,7 +19,7 @@ def load_image(name, color_key=None):
 
 
 pygame.init()
-screen_size = (1000, 850)
+screen_size = (1000, 800)
 screen = pygame.display.set_mode(screen_size)
 FPS = 50
 
@@ -81,7 +81,7 @@ class Tank(Sprite):
     def move(self, x, y):
         self.pos = (x, y)
         self.rect = self.image.get_rect().move(
-            tile_width * self.pos[0] + 15, tile_height * self.pos[1] + 5)
+            tile_width * self.pos[0], tile_height * self.pos[1])
 
 
 def load_level(filename):
@@ -117,20 +117,20 @@ def generate_level(level):
 def move(hero, movement):
     x, y = hero.pos
     if movement == "up":
-        if y > 0 and level_map[y - 1][x] == ".":
+        if y > 0 and (level_map[y - 1][x] == "." and level_map[y - 1][x + 1] == ".") or (level_map[y - 1][x] == "%" and level_map[y - 1][x + 1] == "%"):
             hero.move(x, y - 1)
     #      hit.play()
     elif movement == "down":
-        if y < max_y - 1 and level_map[y + 1][x] == ".":
+        if y < max_y - 1 and (level_map[y + 2][x] == "." and level_map[y + 2][x + 1] == ".") or (level_map[y + 2][x] == "%" and level_map[y + 2][x + 1] == "%"):
             hero.move(x, y + 1)
     #        hit.play()
     elif movement == "left":
-        if x > 0 and level_map[y][x - 1] == ".":
+        if x > 0 and (level_map[y][x - 1] == "." and level_map[y + 1][x - 1] == ".") or (level_map[y][x - 1] == "%" and level_map[y + 1][x - 1] == "%"):
             hero.move(x - 1, y)
 
     #       hit.play()
     elif movement == "right":
-        if x < max_x - 1 and level_map[y][x + 1] == ".":
+        if x < max_x - 1 and (level_map[y][x + 2] == "." and level_map[y + 1][x + 2] == ".") or (level_map[y][x + 2] == "%" and level_map[y + 1][x + 2] == "%"):
             hero.move(x + 1, y)
 
 

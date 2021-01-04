@@ -113,23 +113,28 @@ def generate_level(level):
                 Tile('grass', x, y)
     return new_player, x, y
 
+side = ''
 
 def move(hero, movement):
     x, y = hero.pos
     if movement == "up":
+        side = 'up'
         if y > 0 and (level_map[y - 1][x] == "." and level_map[y - 1][x + 1] == ".") or (level_map[y - 1][x] == "%" and level_map[y - 1][x + 1] == "%"):
             hero.move(x, y - 1)
     #      hit.play()
     elif movement == "down":
+        side =  'down'
         if y < max_y - 1 and (level_map[y + 2][x] == "." and level_map[y + 2][x + 1] == ".") or (level_map[y + 2][x] == "%" and level_map[y + 2][x + 1] == "%"):
             hero.move(x, y + 1)
     #        hit.play()
     elif movement == "left":
+        side = 'left'
         if x > 0 and (level_map[y][x - 1] == "." and level_map[y + 1][x - 1] == ".") or (level_map[y][x - 1] == "%" and level_map[y + 1][x - 1] == "%"):
             hero.move(x - 1, y)
 
     #       hit.play()
     elif movement == "right":
+        side = 'right'
         if x < max_x - 1 and (level_map[y][x + 2] == "." and level_map[y + 1][x + 2] == ".") or (level_map[y][x + 2] == "%" and level_map[y + 1][x + 2] == "%"):
             hero.move(x + 1, y)
 

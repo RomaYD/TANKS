@@ -1,6 +1,9 @@
 import pygame
 import os
 import sys
+import time
+import random
+import uuid
 
 
 def load_image(name, color_key=None):
@@ -19,8 +22,9 @@ def load_image(name, color_key=None):
 
 
 pygame.init()
-screen_size = (1000, 800)
+screen_size = (500, 500)
 screen = pygame.display.set_mode(screen_size)
+clock = pygame.time.Clock()
 FPS = 50
 
 tile_images = {
@@ -69,42 +73,101 @@ class Tile(Sprite):
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
 
+class Bullet(Sprite):
+    def __init__(self, pos_x, pos_y):
+        self.damage = 100
+        self.speed = 5
+        super().__init__(hero_group)
+        self.rect = self.image.get_rect().move(
+            pos_x, pos_y)
+        self.bullet_pos = (pos_x, pos_y)
+
 
 class Tank(Sprite):
     def __init__(self, pos_x, pos_y):
+        self.health = 100
+        self.speed = 2
+        self.tankx = 144
+        self.tanky = 400
         super().__init__(hero_group)
         self.image = player_image
         self.rect = self.image.get_rect().move(
-            tile_width * pos_x + 15, tile_height * pos_y + 5)
+            self.tankx, self.tanky)
         self.pos = (pos_x, pos_y)
+        self.post = (self.tankx, self.tanky)
 
     def move(self, x, y):
+        global diratoin
         self.pos = (x, y)
+        if side == 'up' and diratoin == 2:
+            self.image = pygame.transform.rotate(self.image, 180)
+            diratoin = 1
+        elif side == 'up' and diratoin == 4:
+            self.image = pygame.transform.rotate(self.image, 90)
+            diratoin = 1
+        elif side == 'up' and diratoin == 3:
+            self.image = pygame.transform.rotate(self.image, 270)
+            diratoin = 1
+        elif side == 'down' and diratoin == 1:
+            self.image = pygame.transform.rotate(self.image, 180)
+            diratoin = 2
+        elif side == 'down' and diratoin == 4:
+            self.image = pygame.transform.rotate(self.image, 270)
+            diratoin = 2
+        elif side == 'down' and diratoin == 3:
+            self.image = pygame.transform.rotate(self.image, 90)
+            diratoin = 2
+        elif side == 'right' and diratoin == 1:
+            self.image = pygame.transform.rotate(self.image, 270)
+            diratoin = 4
+        elif side == 'right' and diratoin == 2:
+            self.image = pygame.transform.rotate(self.image, 90)
+            diratoin = 4
+        elif side == 'right' and diratoin == 3:
+            self.image = pygame.transform.rotate(self.image, 180)
+            diratoin = 4
+        elif side == 'left' and diratoin == 1:
+            self.image = pygame.transform.rotate(self.image, 90)
+            diratoin = 3
+        elif side == 'left' and diratoin == 2:
+            self.image = pygame.transform.rotate(self.image, 270)
+            diratoin = 3
+        elif side == 'left' and diratoin == 4:
+            self.image = pygame.transform.rotate(self.image, 180)
+            diratoin = 3
+        elif side == 'up' and diratoin != 1:
+            self.image = self.image
+            diratoin = 1
+        elif side == "down" and diratoin != 2:
+            self.image = pygame.transform.rotate(self.image, 180)
+            diratoin = 2
+        elif side == "left" and diratoin != 3:
+            self.image = pygame.transform.rotate(self.image, 90)
+            diratoin = 3
+        elif side == "right" and diratoin != 4:
+            self.image = pygame.transform.rotate(self.image, 270)
+            diratoin = 4
         self.rect = self.image.get_rect().move(
             tile_width * self.pos[0], tile_height * self.pos[1])
 
 
 def load_level(filename):
     filename = "data/" + filename
-    # читаем уровень, убирая символы перевода строки
     with open(filename, 'r') as mapFile:
         level_map = [line.strip() for line in mapFile]
-    # и подсчитываем максимальную длину
     max_width = max(map(len, level_map))
-    # дополняем каждую строку пустыми клетками ('.')
     return list(map(lambda x: x.ljust(max_width, '*'), level_map))
 
 
 def generate_level(level):
     new_player, x, y = None, None, None
     xcord = 9
-    ycord = 26
+    ycord = 25
     new_player = Tank(xcord, ycord)
     for y in range(len(level)):
         for x in range(len(level[y])):
             if level[y][x] == '.':
                 Tile('empty', x, y)
-
             elif level[y][x] == '#':
                 Tile('brick', x, y)
             elif level[y][x] == '@':
@@ -112,30 +175,31 @@ def generate_level(level):
             elif level[y][x] == '%':
                 Tile('grass', x, y)
     return new_player, x, y
+#144
+#400
 
 side = ''
 
+
 def move(hero, movement):
     x, y = hero.pos
+    xt, yt = hero.post
+    global max_x, max_y
     if movement == "up":
-        side = 'up'
-        if y > 0 and (level_map[y - 1][x] == "." and level_map[y - 1][x + 1] == ".") or (level_map[y - 1][x] == "%" and level_map[y - 1][x + 1] == "%"):
+        if y > 0 and (level_map[y - 1][x] == "." and level_map[y - 1][x + 1] == ".") or (
+                level_map[y - 1][x] == "%" and level_map[y - 1][x + 1] == "%"):
             hero.move(x, y - 1)
-    #      hit.play()
     elif movement == "down":
-        side =  'down'
-        if y < max_y - 1 and (level_map[y + 2][x] == "." and level_map[y + 2][x + 1] == ".") or (level_map[y + 2][x] == "%" and level_map[y + 2][x + 1] == "%"):
+        if y < max_y - 1 and (level_map[y + 2][x] == "." and level_map[y + 2][x + 1] == ".") or (
+                level_map[y + 2][x] == "%" and level_map[y + 2][x + 1] == "%"):
             hero.move(x, y + 1)
-    #        hit.play()
     elif movement == "left":
-        side = 'left'
-        if x > 0 and (level_map[y][x - 1] == "." and level_map[y + 1][x - 1] == ".") or (level_map[y][x - 1] == "%" and level_map[y + 1][x - 1] == "%"):
+        if x > 0 and (level_map[y][x - 1] == "." and level_map[y + 1][x - 1] == ".") or (
+                level_map[y][x - 1] == "%" and level_map[y + 1][x - 1] == "%"):
             hero.move(x - 1, y)
-
-    #       hit.play()
     elif movement == "right":
-        side = 'right'
-        if x < max_x - 1 and (level_map[y][x + 2] == "." and level_map[y + 1][x + 2] == ".") or (level_map[y][x + 2] == "%" and level_map[y + 1][x + 2] == "%"):
+        if x < max_x - 1 and (level_map[y][x + 2] == "." and level_map[y + 1][x + 2] == ".") or (
+                level_map[y][x + 2] == "%" and level_map[y + 1][x + 2] == "%"):
             hero.move(x + 1, y)
 
 
@@ -143,18 +207,24 @@ def move(hero, movement):
 level_map = load_level("map1.txt")
 hero, max_x, max_y = generate_level(load_level('map1.txt'))
 running = True
+diratoin = 0
 while running:
+    movement = True
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
+                side = 'up'
                 move(hero, "up")
             elif event.key == pygame.K_DOWN:
+                side = 'down'
                 move(hero, "down")
             elif event.key == pygame.K_LEFT:
+                side = 'left'
                 move(hero, "left")
             elif event.key == pygame.K_RIGHT:
+                side = 'right'
                 move(hero, "right")
 
     screen.fill(pygame.Color(0, 0, 0))

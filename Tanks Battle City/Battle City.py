@@ -1155,13 +1155,13 @@ class Game():
         if play_sounds:
             pygame.mixer.init(44100, -16, 1, 512)
 
-        # sounds["start"] = pygame.mixer.Sound("sounds/gamestart.ogg")
-        # sounds["end"] = pygame.mixer.Sound("sounds/gameover.ogg")
-        # sounds["score"] = pygame.mixer.Sound("sounds/score.ogg")
-        # sounds["fire"] = pygame.mixer.Sound("sounds/fire.ogg")
-        # sounds["explosion"] = pygame.mixer.Sound("sounds/explosion.ogg")
-        # sounds["brick"] = pygame.mixer.Sound("sounds/brick.ogg")
-        # sounds["steel"] = pygame.mixer.Sound("sounds/steel.ogg")
+        sounds["start"] = pygame.mixer.Sound("sounds\gamestart.ogg")
+        sounds["end"] = pygame.mixer.Sound("sounds\gameover.ogg")
+        sounds["score"] = pygame.mixer.Sound("sounds\core.ogg")
+        sounds["fire"] = pygame.mixer.Sound("sounds\fire.ogg")
+        sounds["explosion"] = pygame.mixer.Sound("sounds\explosion.ogg")
+        sounds["brick"] = pygame.mixer.Sound("sounds\brick.ogg")
+        sounds["steel"] = pygame.mixer.Sound("sounds\steel.ogg")
 
         self.enemy_life_image = sprites.subsurface(81 * 2, 57 * 2, 7 * 2, 7 * 2)
         self.player_life_image = sprites.subsurface(89 * 2, 56 * 2, 7 * 2, 8 * 2)

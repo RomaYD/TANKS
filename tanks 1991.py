@@ -534,8 +534,8 @@ class Tank():
                     tank.trophies["enemy" + str(self.type)] += 1
                     points = (self.type + 1) * 100
                     tank.score += points
-                    #                  if play_sounds:
-                    #                       sounds["explosion"].play()
+                    if play_sounds:
+                        sounds["explosion"].play()
 
                     labels.append(Label(self.rect.topleft, str(points), 500))
 
@@ -1103,7 +1103,6 @@ class Bullet(Sprite):
             return
 
     def explode(self):
-        """ start bullets's explosion """
         global screen
         if self.state != self.STATE_REMOVED:
             self.state = self.STATE_EXPLODING
@@ -1155,13 +1154,13 @@ class Game():
         if play_sounds:
             pygame.mixer.init(44100, -16, 1, 512)
 
-        # sounds["start"] = pygame.mixer.Sound("sounds/gamestart.ogg")
-        # sounds["end"] = pygame.mixer.Sound("sounds/gameover.ogg")
-        # sounds["score"] = pygame.mixer.Sound("sounds/score.ogg")
-        # sounds["fire"] = pygame.mixer.Sound("sounds/fire.ogg")
-        # sounds["explosion"] = pygame.mixer.Sound("sounds/explosion.ogg")
-        # sounds["brick"] = pygame.mixer.Sound("sounds/brick.ogg")
-        # sounds["steel"] = pygame.mixer.Sound("sounds/steel.ogg")
+        sounds["start"] = pygame.mixer.Sound("sounds/gamestart.ogg")
+        sounds["end"] = pygame.mixer.Sound("sounds/gameover.ogg")
+        sounds["score"] = pygame.mixer.Sound("sounds/score.ogg")
+        sounds["fire"] = pygame.mixer.Sound("sounds/fire.ogg")
+        sounds["explosion"] = pygame.mixer.Sound("sounds/explosion.ogg")
+        sounds["brick"] = pygame.mixer.Sound("sounds/brick.ogg")
+        sounds["steel"] = pygame.mixer.Sound("sounds/steel.ogg")
 
         self.enemy_life_image = sprites.subsurface(81 * 2, 57 * 2, 7 * 2, 7 * 2)
         self.player_life_image = sprites.subsurface(89 * 2, 56 * 2, 7 * 2, 8 * 2)
@@ -1234,10 +1233,10 @@ class Game():
         global play_sounds, sounds
 
         print("Game Over")
-        #     if play_sounds:
-        #         for sound in sounds:
-        #             sounds[sound].stop()
-        #          sounds["end"].play()
+        if play_sounds:
+            for sound in sounds:
+                sounds[sound].stop()
+            sounds["end"].play()
 
         self.game_over_y = 416 + 40
 
@@ -1413,8 +1412,8 @@ class Game():
             tanks = players[0].trophies["enemy" + str(i)]
 
             for n in range(tanks + 1):
-                #       if n > 0 and play_sounds:
-                #           sounds["score"].play()
+                if n > 0 and play_sounds:
+                    sounds["score"].play()
 
                 # стереть предыдущий текст
                 screen.blit(self.font.render(str(n - 1).rjust(2), False, black), [170, 168 + (i * 45)])
@@ -1433,8 +1432,8 @@ class Game():
                 tanks = players[1].trophies["enemy" + str(i)]
 
                 for n in range(tanks + 1):
-                    #                   if n > 0 and play_sounds:
-                    #                        sounds["score"].play()
+                    if n > 0 and play_sounds:
+                        sounds["score"].play()
 
                     screen.blit(self.font.render(str(n - 1).rjust(2), False, black), [277, 168 + (i * 45)])
                     screen.blit(self.font.render(str(n).rjust(2), False, white), [277, 168 + (i * 45)])
@@ -1486,9 +1485,6 @@ class Game():
 
         for bullet in bullets:
             bullet.draw()
-
-        # for bonus in bonuses:
-        #     bonus.draw()
 
         self.level.draw([self.level.TILE_GRASS])
 
@@ -1755,8 +1751,8 @@ class Game():
         self.level.enemies_left = [0] * enemies_l[0] + [1] * enemies_l[1] + [2] * enemies_l[2] + [3] * enemies_l[3]
         random.shuffle(self.level.enemies_left)
 
-        #      if play_sounds:
-        #          sounds["start"].play()
+        if play_sounds:
+            sounds["start"].play()
 
         self.reloadPlayers()
 
@@ -1797,8 +1793,8 @@ class Game():
                             else:
                                 if index == 0:
                                     player.fire()
-                                #     if player.fire() and play_sounds:
-                                # sounds["fire"].play()
+                                    if player.fire() and play_sounds:
+                                        sounds["fire"].play()
                                 if index == 1:
                                     player.pressed[0] = True
                                 elif index == 2:

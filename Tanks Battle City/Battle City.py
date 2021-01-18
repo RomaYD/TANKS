@@ -304,11 +304,12 @@ class Explosion():
 
     def draw(self):
         global screen
-        """ draw current explosion frame """
+        # Рисует картинку взрыва танка 
         screen.blit(self.image, self.position)
 
     def update(self):
-        """ Advace to the next image """
+        # Переход картинок для анимации
+
         if len(self.images) > 0:
             self.image = self.images.pop()
         else:
